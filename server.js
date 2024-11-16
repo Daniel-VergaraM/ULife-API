@@ -56,6 +56,17 @@ app.post("/post", (req, res, _next) => {
   }
 });
 
+app.delete("/post/:id", (req, res, _next) => {
+  try {
+    const { id } = req.params;
+    const stmt = db.prepare("DELETE FROM posts WHERE id = ?");
+    stmt.run(id);
+    res.sendStatus(200);
+  } catch (error) {
+    res.sendStatus(500).json({ error: "Error al eliminar el post" });
+  }
+})
+
 app.get("/user/:id", (req, res, _next) => {
   try {
     const { id } = req.params;
@@ -79,6 +90,17 @@ app.post("/user", (req, res, _next) => {
     res.sendStatus(500).json({ error: "Error al crear un usuario" });
   }
 });
+
+app.delete("/user/:id", (req, res, _next) => {
+  try {
+    const { id } = req.params;
+    const stmt = db.prepare("DELETE FROM users WHERE id = ?");
+    stmt.run(id);
+    res.sendStatus(200);
+  } catch (error) {
+    res.sendStatus(500).json({ error: "Error al eliminar el usuario" });
+  }
+})
 
 app.listen(3000, () => {
     console.log('Server is running on port 3000');
