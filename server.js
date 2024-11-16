@@ -7,19 +7,19 @@ const db = new Database("database.db");
 db.exec(`
   CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY,
-    name TEXT,
-    email TEXT,
-    profile_picture TEXT,
-    password TEXT
+    name VARCHAR(63),
+    email VARCHAR(127),
+    profile_picture VARCHAR(511),
+    password VARCHAR(63)
   );
   
   CREATE TABLE IF NOT EXISTS posts (
     id INTEGER PRIMARY KEY,
-    title TEXT,
-    content TEXT,
+    title VARCHAR(127),
+    content VARCHAR(511),
     user_id INTEGER,
-    profile_picture TEXT,
-    postType TEXT,
+    profile_picture VARCHAR(511),
+    postType VARCHAR(7),
     FOREIGN KEY(user_id) REFERENCES users(id)
   );
 `);
@@ -29,11 +29,11 @@ app.use(express.json());
 app.use(require("cors")());
 app.use(require("morgan")("dev"));
 
-app.get("/", (_req, res) => {
+app.get("/", (_req, res, _next) => {
   res.send("Hello World");
 });
 
-app.get("/posts", (_req, res) => {
+app.get("/posts", (_req, res, _next) => {
   try {
     const stmt = db.prepare("SELECT * FROM posts");
     const posts = stmt.all();
@@ -43,7 +43,7 @@ app.get("/posts", (_req, res) => {
   }
 });
 
-app.post("/post", (req, res) => {
+app.post("/post", (req, res, _next) => {
   try {
     const { title, content, user_id, profile_picture, postType } = req.body;
     const stmt = db.prepare(
@@ -56,7 +56,7 @@ app.post("/post", (req, res) => {
   }
 });
 
-app.get("/user/:id", (req, res) => {
+app.get("/user/:id", (req, res, _next) => {
   try {
     const { id } = req.params;
     const stmt = db.prepare("SELECT * FROM users WHERE id = ?");
@@ -67,7 +67,7 @@ app.get("/user/:id", (req, res) => {
   }
 });
 
-app.post("/user", (req, res) => {
+app.post("/user", (req, res, _next) => {
   try {
     const { name, email, profile_picture, password } = req.body;
     const stmt = db.prepare(
